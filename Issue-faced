@@ -1,0 +1,6 @@
+App was deployed successfully
+frontend working
+Facing issue in backend connectivity, also might have issue with nginx reverse proxy, need to troubleshoot.
+in the given time i was enable to troubleshoot.
+Since frontend is working fine and running, but unable to communicate with backend.
+Issue might be of backend connectivity with mongo or reverse proxy issue.
