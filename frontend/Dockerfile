@@ -8,6 +8,6 @@ RUN npm run build --prod
 
 # Serve with nginx
 FROM nginx:alpine
-COPY --from=build /usr/src/app/dist/frontend /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/angular-15-crud /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
