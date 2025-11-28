@@ -94,3 +94,15 @@ Build success console output
 <img width="1893" height="713" alt="image" src="https://github.com/user-attachments/assets/4168ce9d-8277-405c-a23f-7dd9069d1915" />
 
 
+***Nginx***
+
+location / {
+    proxy_pass http://frontend:80/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+this handles frontend angual and node.js backend api, above mentioned is for frontend.
+
+
