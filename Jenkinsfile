@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKERHUB_USER = credentials('dockerhub-creds').username
-        DOCKERHUB_PASS = credentials('dockerhub-creds').password
-    }
-
     stages {
 
         stage('Clone Repo') {
@@ -14,38 +9,45 @@ pipeline {
             }
         }
 
+        stage('Docker Login') {
+            steps {
+                // Use credentials safely inside the steps
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    sh 'echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin'
+                }
+            }
+        }
+
         stage('Build Backend Image') {
             steps {
-                sh '''
-                    cd backend
-                    docker build -t $DOCKERHUB_USER/mean-backend:latest .
-                '''
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    sh '''
+                        cd backend
+                        docker build -t $DOCKERHUB_USER/mean-backend:latest .
+                    '''
+                }
             }
         }
 
         stage('Build Frontend Image') {
             steps {
-                sh '''
-                    cd frontend
-                    docker build -t $DOCKERHUB_USER/mean-frontend:latest .
-                '''
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                sh """
-                    echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
-                """
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    sh '''
+                        cd frontend
+                        docker build -t $DOCKERHUB_USER/mean-frontend:latest .
+                    '''
+                }
             }
         }
 
         stage('Push Images') {
             steps {
-                sh '''
-                    docker push $DOCKERHUB_USER/mean-backend:latest
-                    docker push $DOCKERHUB_USER/mean-frontend:latest
-                '''
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
+                    sh '''
+                        docker push $DOCKERHUB_USER/mean-backend:latest
+                        docker push $DOCKERHUB_USER/mean-frontend:latest
+                    '''
+                }
             }
         }
 
